@@ -9,7 +9,7 @@ const Logo = () => {
                 alt="logo"
                 src="/logo.svg"
             />
-            <h1 className="text-2xl font-bold text-[#007DFC]">Learnitees</h1>
+            <h1 className="text-2xl font-bold text-[#0369a1]">Learnitees</h1>
         </div>
 
     )
