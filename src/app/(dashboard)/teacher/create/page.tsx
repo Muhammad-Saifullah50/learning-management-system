@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { CourseCreateSchema } from '@/validations/CourseCreateSchema'
+import { CourseTitleSchema } from '@/validations/CourseCreateSchema'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FormControl, FormField, FormItem, FormLabel, Form, FormDescription, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -14,9 +14,9 @@ import toast from "react-hot-toast"
 
 const CreateCoursePage = () => {
   const router = useRouter();
-  const form = useForm<z.infer<typeof CourseCreateSchema>>(
+  const form = useForm<z.infer<typeof CourseTitleSchema>>(
     {
-      resolver: zodResolver(CourseCreateSchema),
+      resolver: zodResolver(CourseTitleSchema),
       defaultValues: {
         title: ''
       }
@@ -25,7 +25,7 @@ const CreateCoursePage = () => {
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof CourseCreateSchema>) => {
+  const onSubmit = async (values: z.infer<typeof CourseTitleSchema>) => {
     try {
       const response = await axios.post('/api/courses', values)
       router.push(`/teacher/courses/${response.data.data.id}`)
