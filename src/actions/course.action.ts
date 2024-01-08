@@ -1,6 +1,6 @@
 'use server'
 
-import { db } from "./prisma"
+import { db } from "../lib/prisma"
 
 export const getCourseById = async (courseId: string) => {
     const course = await db.course.findUnique({

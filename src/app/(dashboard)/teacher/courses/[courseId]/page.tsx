@@ -2,10 +2,11 @@ import DescriptionForm from "@/components/DescriptionForm";
 import IconBadge from "@/components/IconBadge";
 import ImageForm from "@/components/ImageForm";
 import TitleForm from "@/components/TitleForm";
-import { getCourseById } from "@/lib/course.action";
+import { getCourseById } from "@/actions/course.action";
 import { auth } from "@clerk/nextjs"
 import { LayoutDashboard } from "lucide-react";
 import { redirect } from "next/navigation";
+import { getCategories } from "@/actions/category.action";
 
 const CoursePage = async ({ params }: { params: { courseId: string } }) => {
 
@@ -16,6 +17,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
     }
 
     const course = await getCourseById(params.courseId);
+    const categories = await getCategories();
 
     if (!course) {
         return (<div>Course not found</div>)
@@ -49,16 +51,16 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
                         <h2 className="text-xl">Customize your course</h2>
                     </div>
                     <TitleForm
-                    initialData={course}
-                    courseId={course.id}
+                        initialData={course}
+                        courseId={course.id}
                     />
                     <DescriptionForm
-                    initialData={course}
-                    courseId={course.id}
+                        initialData={course}
+                        courseId={course.id}
                     />
                     <ImageForm
-                    initialData={course}
-                    courseId={course.id}
+                        initialData={course}
+                        courseId={course.id}
                     />
                 </div>
             </div>
