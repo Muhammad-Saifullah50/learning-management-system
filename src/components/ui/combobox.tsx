@@ -42,17 +42,15 @@ export function Combobox({ options, value, onChange }: ComboboxOptions) {
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className="w-full p-0">
                 <Command>
-                    <CommandInput placeholder="Search framework..." />
-                    <CommandEmpty>No option found.</CommandEmpty>
                     <CommandGroup>
                         {options.map((option) => (
                             <CommandItem
                                 key={option.value}
                                 value={option.value}
                                 onSelect={(currentValue) => {
-                                    onChange(option.value === value ? "" : option.value)
+                                    onChange(currentValue === value ? "" : currentValue)
                                     setOpen(false)
                                 }}
                             >

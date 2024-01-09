@@ -4,9 +4,11 @@ import ImageForm from "@/components/ImageForm";
 import TitleForm from "@/components/TitleForm";
 import { getCourseById } from "@/actions/course.action";
 import { auth } from "@clerk/nextjs"
-import { LayoutDashboard } from "lucide-react";
+import { CircleDollarSign, LayoutDashboard, ListChecks } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getCategories } from "@/actions/category.action";
+import CategoryForm from "@/components/CategoryForm";
+import { Category } from "@prisma/client";
 
 const CoursePage = async ({ params }: { params: { courseId: string } }) => {
 
@@ -62,6 +64,35 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
                         initialData={course}
                         courseId={course.id}
                     />
+                    <CategoryForm
+                        initialData={course}
+                        courseId={course.id}
+                        options={categories.map((category: Category) => ({
+                            label: category.name,
+                            value: category.id
+                        }))}
+                    />
+                </div>
+
+                <div className="space-y-6">
+                    <div >
+                        <div className="flex items-center gap-x-2">
+                            <IconBadge
+                                icon={ListChecks}
+                            />
+                            <h2 className="text-xl">Course chapters</h2>
+                        </div>
+                        <div>
+                            Todo chapters
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-x-2">
+                        <IconBadge
+                            icon={CircleDollarSign}
+                        />
+                        <h2 className="text-xl">Sell your course    </h2>
+                    </div>
                 </div>
             </div>
         </div>

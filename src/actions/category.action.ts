@@ -6,6 +6,5 @@ export const getCategories = async () => {
             name: "asc"
         }
     });
-
     return categories
 }
