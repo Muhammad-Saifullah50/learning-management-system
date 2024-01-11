@@ -1,6 +1,6 @@
 "use client"
 
-import { CourseDescriptionSchema } from "@/validations/CourseCreateSchema"
+import { CoursePriceSchema } from "@/validations/CourseCreateSchema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios"
 import { Pencil } from "lucide-react"
@@ -14,27 +14,28 @@ import { Input } from "./ui/input"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Textarea } from "./ui/textarea"
+import { formatPrice } from "@/lib/format"
 
 
-interface DescriptionFormProps {
-    initialData: { description: string }
+interface PriceFormProps {
+    initialData: { price: number }
     courseId: string
 }
-const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
+const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
 
     const [isEditing, setIsEditing] = useState(false)
     const router = useRouter();
 
-    const form = useForm<z.infer<typeof CourseDescriptionSchema>>({
-        resolver: zodResolver(CourseDescriptionSchema),
+    const form = useForm<z.infer<typeof CoursePriceSchema>>({
+        resolver: zodResolver(CoursePriceSchema),
         defaultValues: {
-            description: initialData?.description
+            price: initialData?.price
         }
     });
 
     const { isSubmitting, isValid } = form.formState;
 
-    const onSubmit = async (values: z.infer<typeof CourseDescriptionSchema>) => {
+    const onSubmit = async (values: z.infer<typeof CoursePriceSchema>) => {
 
         try {
             const response = await axios.patch(`/api/courses/${courseId}`, values)
@@ -52,12 +53,12 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
     return (
         <div className="mt-6 bg-slate-100 border rounded-md p-4">
             <div className="font-medium flex items-center justify-between">
-                Course Description
+                Course Price
                 <Button variant={'ghost'} onClick={toggleEdit}>
                     {isEditing ? 'Cancel' : (
                         <>
                             <Pencil className="h-4 w-4 mr-2" />
-                            Edit Description
+                            Edit Price
                         </>
                     )}
 
@@ -66,9 +67,11 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
 
             {!isEditing && (
                 <p className={cn('text-sm mt-2',
-                    !initialData.description && "text-slate-500 italic"
+                    !initialData.price && "text-slate-500 italic"
                 )}>
-                    {initialData.description || "No Description"}</p>
+                    {initialData.price
+                        ? formatPrice(initialData.price)
+                        : 'No price'}</p>
             )}
 
             {isEditing && (
@@ -76,15 +79,16 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
                     <form className="mt-4 space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
                         <FormField
                             control={form.control}
-                            name="description"
+                            name="price"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Textarea
+                                        <Input
+                                            type="number"
+                                            step={0.01}
                                             disabled={isSubmitting}
-
                                             {...field}
-                                            placeholder="e.g This course is about ..."
+                                            placeholder="Set a price for your course"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -107,4 +111,4 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
     )
 }
 
-export default DescriptionForm
+export default PriceForm

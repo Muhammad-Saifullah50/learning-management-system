@@ -21,8 +21,8 @@ model Course {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  attachements Attachment[]
-
+  attachments Attachment[]
+  
   categoryId String? @db.ObjectId
   Category     Category?    @relation(fields: [categoryId], references: [id])
 

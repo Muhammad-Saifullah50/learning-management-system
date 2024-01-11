@@ -4,11 +4,13 @@ import ImageForm from "@/components/ImageForm";
 import TitleForm from "@/components/TitleForm";
 import { getCourseById } from "@/actions/course.action";
 import { auth } from "@clerk/nextjs"
-import { CircleDollarSign, LayoutDashboard, ListChecks } from "lucide-react";
+import { CircleDollarSign, File, LayoutDashboard, ListChecks } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getCategories } from "@/actions/category.action";
 import CategoryForm from "@/components/CategoryForm";
 import { Category } from "@prisma/client";
+import PriceForm from "@/components/PriceForm";
+import AttachmentForm from "@/components/AttachmentForm";
 
 const CoursePage = async ({ params }: { params: { courseId: string } }) => {
 
@@ -86,12 +88,32 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
                             Todo chapters
                         </div>
                     </div>
+                    <div>
+                        <div className="flex items-center gap-x-2">
+                            <IconBadge
+                                icon={CircleDollarSign}
+                            />
+                            <h2 className="text-xl">Sell your course </h2>
+                        </div>
 
-                    <div className="flex items-center gap-x-2">
-                        <IconBadge
-                            icon={CircleDollarSign}
+                        <PriceForm
+                            initialData={course}
+                            courseId={course.id}
                         />
-                        <h2 className="text-xl">Sell your course    </h2>
+                    </div>
+
+                    <div >
+                        <div className="flex items-center gap-x-2">
+                            <IconBadge
+                                icon={File}
+                            />
+                            <h2 className="text-xl">Resources and attachments</h2>
+                        </div>
+                        <AttachmentForm
+                        initialData={course}
+                        courseId={course.id}
+                    />
+
                     </div>
                 </div>
             </div>

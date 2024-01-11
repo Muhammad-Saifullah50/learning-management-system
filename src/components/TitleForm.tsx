@@ -25,7 +25,10 @@ const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
 
     const form = useForm<z.infer<typeof CourseTitleSchema>>({
         resolver: zodResolver(CourseTitleSchema),
-        defaultValues: initialData
+        defaultValues: {
+            title: initialData?.title
+        }
+
     });
 
     const { isSubmitting, isValid } = form.formState;

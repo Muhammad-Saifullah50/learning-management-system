@@ -11,6 +11,15 @@ export const CourseDescriptionSchema = z.object({
 export const CourseImageSchema = z.object({
     imageUrl: z.string().min(1, { message: "Image is required" }),
 })
+
 export const CourseCategorySchema = z.object({
     categoryId: z.string().min(1, { message: "Please select a category" }),
+})
+
+export const CoursePriceSchema = z.object({
+    price: z.coerce.number().min(1, { message: "Price is required" }),
+})
+
+export const CourseAttachmentSchema = z.object({
+    url: z.string().min(1, { message: "Attachment is required" }),
 })
