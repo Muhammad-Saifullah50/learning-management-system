@@ -11,6 +11,7 @@ import CategoryForm from "@/components/CategoryForm";
 import { Category } from "@prisma/client";
 import PriceForm from "@/components/PriceForm";
 import AttachmentForm from "@/components/AttachmentForm";
+import ChapterForm from "@/components/ChapterForm";
 
 const CoursePage = async ({ params }: { params: { courseId: string } }) => {
 
@@ -84,9 +85,10 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
                             />
                             <h2 className="text-xl">Course chapters</h2>
                         </div>
-                        <div>
-                            Todo chapters
-                        </div>
+                        <ChapterForm
+                            initialData={course}
+                            courseId={course.id}
+                        />
                     </div>
                     <div>
                         <div className="flex items-center gap-x-2">
@@ -110,9 +112,9 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
                             <h2 className="text-xl">Resources and attachments</h2>
                         </div>
                         <AttachmentForm
-                        initialData={course}
-                        courseId={course.id}
-                    />
+                            initialData={course}
+                            courseId={course.id}
+                        />
 
                     </div>
                 </div>
