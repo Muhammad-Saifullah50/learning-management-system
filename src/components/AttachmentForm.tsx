@@ -47,7 +47,7 @@ export const AttachmentForm = ({
         try {
             setDeletingId(id);
 
-            await axios.delete(`/api/courses/${courseId}/attachments/${id}}`);
+            await axios.delete(`/api/courses/${courseId}/attachments/${id}`);
             toast.success("Attachment deleted");
             router.refresh();
         } catch (error: any) {
