@@ -8,11 +8,10 @@ import { CircleDollarSign, File, LayoutDashboard, ListChecks } from "lucide-reac
 import { redirect } from "next/navigation";
 import { getCategories } from "@/actions/category.action";
 import CategoryForm from "@/components/CategoryForm";
-import { Category } from "@prisma/client";
+import { Category, Chapter } from "@prisma/client";
 import PriceForm from "@/components/PriceForm";
 import AttachmentForm from "@/components/AttachmentForm";
 import ChapterForm from "@/components/ChapterForm";
-
 const CoursePage = async ({ params }: { params: { courseId: string } }) => {
 
     const { userId } = auth();
@@ -34,6 +33,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
         course.imageUrl,
         course.price,
         course.categoryId,
+        course.chapters.some((chapter: Chapter) => chapter.isPublished)
     ];
 
     const totalFields = requiredFields.length;

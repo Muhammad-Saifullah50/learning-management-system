@@ -1,9 +1,9 @@
 "use client"
 
-import { CourseDescriptionSchema } from "@/validations/CourseCreateSchema"
+import { CourseDescriptionSchema, CourseTitleSchema } from "@/validations/CourseCreateSchema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios"
-import { Pencil } from "lucide-react"
+import { Pencil, PlusCircle } from "lucide-react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { z } from "zod"
@@ -13,32 +13,36 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Textarea } from "./ui/textarea"
+import { Input } from "./ui/input"
+import { Chapter, Course } from "@prisma/client"
+import ChapterList from "./ChapterList"
 
 
 interface ChapterFormProps {
-    initialData: { description: string }
+    initialData: Course & { chapters: Chapter[] }
     courseId: string
 }
 const ChapterForm = ({ initialData, courseId }: ChapterFormProps) => {
 
-    const [isEditing, setIsEditing] = useState(false)
+    const [isCreating, setIsCreating] = useState(false)
+    const [isUpdating, setIsUpdating] = useState(false)
     const router = useRouter();
 
-    const form = useForm<z.infer<typeof CourseChapterSchema>>({
-        resolver: zodResolver(CourseChapterSchema),
+    const form = useForm<z.infer<typeof CourseTitleSchema>>({
+        resolver: zodResolver(CourseTitleSchema),
         defaultValues: {
-            description: initialData?.description
+            title: ""
         }
     });
 
     const { isSubmitting, isValid } = form.formState;
 
-    const onSubmit = async (values: z.infer<typeof CourseChapterSchema>) => {
+    const onSubmit = async (values: z.infer<typeof CourseTitleSchema>) => {
 
         try {
-            const response = await axios.patch(`/api/courses/${courseId}`, values)
-            toast.success('Course updated successfully');
-            toggleEdit();
+            const response = await axios.post(`/api/courses/${courseId}/chapters`, values)
+            toast.success('Chapter created successfully');
+            toggleCreating();
             router.refresh();
         } catch (error: any) {
             console.log(error)
@@ -46,44 +50,37 @@ const ChapterForm = ({ initialData, courseId }: ChapterFormProps) => {
         }
     }
 
-    const toggleEdit = () => setIsEditing(current => !current)
+    const toggleCreating = () => setIsCreating(current => !current)
 
     return (
         <div className="mt-6 bg-slate-100 border rounded-md p-4">
             <div className="font-medium flex items-center justify-between">
                 Course Chapters
-                <Button variant={'ghost'} onClick={toggleEdit}>
-                    {isEditing ? 'Cancel' : (
+                <Button variant={'ghost'} onClick={toggleCreating}>
+                    {isCreating ? 'Cancel' : (
                         <>
-                            <Pencil className="h-4 w-4 mr-2" />
-                            Edit Description
+                            <PlusCircle className="h-4 w-4 mr-2" />
+                            Add a chapter
                         </>
                     )}
 
                 </Button>
             </div>
 
-            {!isEditing && (
-                <p className={cn('text-sm mt-2',
-                    !initialData.description && "text-slate-500 italic"
-                )}>
-                    {initialData.description || "No Description"}</p>
-            )}
-
-            {isEditing && (
+            {isCreating && (
                 <Form {...form}>
                     <form className="mt-4 space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
                         <FormField
                             control={form.control}
-                            name="description"
+                            name="title"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Textarea
+                                        <Input
                                             disabled={isSubmitting}
 
                                             {...field}
-                                            placeholder="e.g This course is about ..."
+                                            placeholder="e.g Introduction to the course ..."
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -91,16 +88,33 @@ const ChapterForm = ({ initialData, courseId }: ChapterFormProps) => {
                             )}
                         />
 
-                        <div className="flex items-center gap-x-2">
-                            <Button
-                                disabled={isSubmitting || !isValid}
-                                type="submit"
-                            >
-                                Save
-                            </Button>
-                        </div>
+                        <Button
+                            disabled={isSubmitting || !isValid}
+                            type="submit"
+                        >
+                            Create
+                        </Button>
                     </form>
                 </Form>
+            )}
+
+            {!isCreating && (
+                <div className={cn("text-sm mt-2",
+                    !initialData.chapters.length && 'text-slate-500 italic'
+                )}>
+                    {!initialData.chapters.length && "No Chapters"}
+
+                    <ChapterList
+                        onEdit={() => { }}
+                        onReorder={() => { }}
+                        items={initialData.chapters || []}
+                    />
+                </div>
+            )}
+            {!isCreating && (
+                <p className="text-xs mt-4 text-muted-foreground">
+                    Drag and drop to reorder the chapters
+                </p>
             )}
         </div>
     )
