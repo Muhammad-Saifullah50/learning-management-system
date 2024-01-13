@@ -3,7 +3,7 @@
 import { CourseDescriptionSchema, CourseTitleSchema } from "@/validations/CourseCreateSchema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios"
-import { Pencil, PlusCircle } from "lucide-react"
+import { Loader2, Pencil, PlusCircle } from "lucide-react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { z } from "zod"
@@ -52,8 +52,35 @@ const ChapterForm = ({ initialData, courseId }: ChapterFormProps) => {
 
     const toggleCreating = () => setIsCreating(current => !current)
 
+    const onReorder = async (updateData: { id: string; position: number }[]) => {
+        try {
+            setIsUpdating(true)
+
+            await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
+                list: updateData
+            });
+
+            toast.success('Chapters reordered successfully')
+            router.refresh()
+        } catch (error) {
+            toast.error('Something went wrong')
+        } finally {
+            setIsUpdating(false)
+        }
+    }
+
+    const onEdit = (id: string) => {
+        router.push(`/teacher/courses/${courseId}/chapters/${id}`)
+    }
+
     return (
-        <div className="mt-6 bg-slate-100 border rounded-md p-4">
+        <div className="relative mt-6 bg-slate-100 border rounded-md p-4">
+            {isUpdating && (
+                <div className="absolute h-full w-full bg-slate-500/20 top-0 right-0 rounded-md flex items-center justify-center">
+                    <Loader2 className="animate-spin h-6 w-6 text-sky-700" />
+
+                </div>
+            )}
             <div className="font-medium flex items-center justify-between">
                 Course Chapters
                 <Button variant={'ghost'} onClick={toggleCreating}>
@@ -105,8 +132,8 @@ const ChapterForm = ({ initialData, courseId }: ChapterFormProps) => {
                     {!initialData.chapters.length && "No Chapters"}
 
                     <ChapterList
-                        onEdit={() => { }}
-                        onReorder={() => { }}
+                        onEdit={onEdit}
+                        onReorder={onReorder}
                         items={initialData.chapters || []}
                     />
                 </div>
