@@ -1,5 +1,9 @@
 import { getChapterById } from "@/actions/chapter.action";
+import IconBadge from "@/components/IconBadge";
+import { Button } from "@/components/ui/button";
 import { auth } from "@clerk/nextjs";
+import { ArrowLeft, LayoutDashboard } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 const ChapterDetailsPage = async ({ params }: {
@@ -17,15 +21,49 @@ const ChapterDetailsPage = async ({ params }: {
     if (!chapter) return redirect("/");
 
 
-    const  requiredFields = [
+    const requiredFields = [
         chapter.title,
         chapter.description,
         chapter.videoUrl
-    ]                                                                                
+    ]
+
+    const totalFields = requiredFields.length;
+    const completedFields = requiredFields.filter(Boolean).length;
+
+    const completetionText = `(${completedFields}/${totalFields})`
 
     return (
-        <div>
+        <div className="p-6">
+            <div className="flex items-center justify-between">
+                <div className="w-full">
+                    <Button variant="ghost" className="flex items-center text-sm  transition mb-6">
+                        <Link href={`/teacher/courses/${params.courseId}`}
+                        className="flex"
+                            >
+                            <ArrowLeft className="h-4 w-4 mr-2" /> Back to course setup
+                        </Link>
+                    </Button>
 
+                    <div className="flex items-center justify-between w-full">
+                        <div className="flex flex-col gap-y-2">
+                            <h1 className="text-2xl font-medium">Chapter Creation</h1>
+                            <span>Complete all fields {completetionText} completed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 mt-16 gap-6">
+                <div className="space-y-4">
+                    <div>
+                        <div className="flex items-center gap-x-2">
+                            <IconBadge icon={LayoutDashboard} />
+                            <h2>Customize your chapter</h2>
+                        </div>
+                        {/* chapter form */}
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

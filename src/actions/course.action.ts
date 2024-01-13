@@ -23,7 +23,6 @@ export const getCourseById = async (courseId: string) => {
             },
         }
     });
-
     return course
 }
 
