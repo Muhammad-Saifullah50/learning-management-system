@@ -1,5 +1,6 @@
 import { getChapterById } from "@/actions/chapter.action";
 import IconBadge from "@/components/IconBadge";
+import ChapterTitleForm from "@/components/chapter-forms/ChapterTitleForm";
 import { Button } from "@/components/ui/button";
 import { auth } from "@clerk/nextjs";
 import { ArrowLeft, LayoutDashboard } from "lucide-react";
@@ -58,9 +59,13 @@ const ChapterDetailsPage = async ({ params }: {
                     <div>
                         <div className="flex items-center gap-x-2">
                             <IconBadge icon={LayoutDashboard} />
-                            <h2>Customize your chapter</h2>
+                            <h2 className="text-xl">Customize your chapter</h2>
                         </div>
-                        {/* chapter form */}
+                        <ChapterTitleForm
+                        initialData={chapter}
+                        courseId={params.courseId}
+                        chapterId={params.chapterId}
+                        />
                     </div>
                 </div>
             </div>
