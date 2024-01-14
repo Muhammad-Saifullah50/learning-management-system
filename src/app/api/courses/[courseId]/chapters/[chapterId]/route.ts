@@ -58,7 +58,7 @@ export const PATCH = async (
             };
 
             const asset = await Video.Assets.create({
-                input:values.videoUrl,
+                input: values.videoUrl,
                 playback_policy: 'public',
                 test: false
             });
@@ -71,9 +71,93 @@ export const PATCH = async (
                 }
             });
 
-            
+
         }
         return NextResponse.json({ message: "Chapter updated successfully", data: chapter, status: 200 });
+    } catch (error: any) {
+        console.error(error)
+        return NextResponse.json({ error: error?.message, status: 500 })
+    }
+}
+
+export const DELETE = async (
+    request: NextRequest,
+    { params }: { params: { courseId: string, chapterId: string } }
+) => {
+
+    try {
+
+        const { userId } = auth();
+        const { Video } = new Mux(
+            process.env.MUX_TOKEN_ID!,
+            process.env.MUX_TOKEN_SECRET!
+        );
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", status: 401 })
+        };
+
+        const courseOwner = await db.course.findUnique({
+            where: {
+                id: params.courseId,
+                userId: userId
+            }
+        });
+
+        if (!courseOwner) {
+            return NextResponse.json({ error: "Unauthorized", status: 401 })
+        }
+
+        const deletedChapter = await db.chapter.delete({
+            where: {
+                id: params.chapterId,
+                courseId: params.courseId
+            },
+
+        });
+
+        if (!deletedChapter) {
+            return NextResponse.json({ error: "Chapter not found", status: 404 })
+        };
+
+        if (deletedChapter.videoUrl) {
+            const existingMuxData = await db.muxData.findFirst({
+                where: {
+                    chapterId: params.chapterId
+                }
+            });
+
+            if (existingMuxData) {
+                await Video.Assets.del(existingMuxData.assetId);
+                await db.muxData.delete({
+                    where: {
+                        id: existingMuxData.id
+                    }
+                })
+
+            }
+        }
+
+        const publishedChaptersInCourse = db.chapter.findMany({
+            where: {
+                courseId: params.courseId,
+                isPublished: true
+            }
+        });
+
+        if (!publishedChaptersInCourse.length) {
+            await db.course.update({
+                where: {
+                    id: params.courseId
+                },
+                data: {
+                    isPublished: false
+                }
+            })
+        }
+
+        return NextResponse.json({ message: "Chapter deleted successfully", data: deletedChapter, status: 200 });
+
     } catch (error: any) {
         console.error(error)
         return NextResponse.json({ error: error?.message, status: 500 })
