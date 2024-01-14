@@ -9,13 +9,14 @@ import toast from "react-hot-toast"
 import { z } from "zod"
 import { Button } from "../ui/button"
 import { useState } from "react"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } from "../ui/form"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import Editor from "../Editor"
 import { Chapter } from "@prisma/client"
 import Preview from "../Preview"
 import { ChapterAccessSchema } from "@/validations/ChapterCreateSchema"
+import { Checkbox } from "../ui/checkbox"
 
 
 interface ChapterAccessFormProps {
@@ -55,12 +56,12 @@ const ChapterAccessForm = ({ initialData, courseId, chapterId }: ChapterAccessFo
     return (
         <div className="mt-6 bg-slate-100 border rounded-md p-4">
             <div className="font-medium flex items-center justify-between">
-                Chapter Description
+                Chapter Access
                 <Button variant={'ghost'} onClick={toggleEdit}>
                     {isEditing ? 'Cancel' : (
                         <>
                             <Pencil className="h-4 w-4 mr-2" />
-                            Edit Description
+                            Chapter Access
                         </>
                     )}
 
@@ -68,16 +69,14 @@ const ChapterAccessForm = ({ initialData, courseId, chapterId }: ChapterAccessFo
             </div>
 
             {!isEditing && (
-                <div className={cn('text-sm mt-2',
-                    !initialData.description && "text-slate-500 italic"
+                <p className={cn('text-sm mt-2',
+                    !initialData.isFree && "text-slate-500 italic"
                 )}>
-                    {!initialData.description && "No Description"}
-                    {initialData.description && (
-                        <Preview
-                            value={initialData.description || ""}
-                        />
-                    )}
-                </div>
+                    {initialData.isFree
+                        ? "This chapter is free for preview"
+                        : "This chapter is not free"}
+
+                </p>
             )}
 
             {isEditing && (
@@ -85,15 +84,20 @@ const ChapterAccessForm = ({ initialData, courseId, chapterId }: ChapterAccessFo
                     <form className="mt-4 space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
                         <FormField
                             control={form.control}
-                            name="description"
+                            name="isFree"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                                     <FormControl>
-                                        <Editor
-                                            {...field}
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <div className="space-y-1 leading-none">
+                                        <FormDescription>
+                                            Check this box if you want to make this chapter free to view
+                                        </FormDescription>
+                                    </div>
                                 </FormItem>
                             )}
                         />
