@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Chapter, Course, MuxData } from "@prisma/client";
 import Image from "next/image";
-
+import MuxPlayer from "@mux/mux-player-react";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "../FileUpload";
 import { CourseImageSchema } from "@/validations/CourseCreateSchema";
@@ -70,7 +70,10 @@ export const ChapterVideoForm = ({
                     </div>
                 ) : (
                     <div className="relative aspect-video mt-2">
-                        Video Uploaded
+                        <MuxPlayer
+                        playbackId={initialData.muxData?.playbackId || ""}
+                        
+                        />
                     </div>
                 )
             )}
@@ -92,7 +95,7 @@ export const ChapterVideoForm = ({
             )}
 
             {initialData.videoUrl && !isEditing && (
-                <p className="text-xs text-muted-foreground mt-2">Videos can take a few minutes to process. Refresh the page if the video doesnot appear</p>
+                <p className="text-xs text-muted-foreground mt-2">Videos can take a few minutes to process. Refresh the page if the video does not appear</p>
             )}
         </div>
     )
