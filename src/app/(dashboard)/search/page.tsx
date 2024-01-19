@@ -1,9 +1,14 @@
-import React from 'react'
+import { getCategories } from "@/actions/category.action"
+import Categories from "@/components/Categories";
 
-const SearchPage = () => {
+const SearchPage = async () => {
+
+  const categories = await getCategories();
   return (
-    <div>
-      
+    <div className="p-6">
+      <Categories
+        items={categories}
+      />
     </div>
   )
 }
