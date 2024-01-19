@@ -5,6 +5,7 @@ import { db } from "../lib/prisma"
 
 export const getCourseById = async (courseId: string) => {
     const { userId } = auth();
+
     const course = await db.course.findUnique({
         where: {
             id: courseId,
@@ -26,3 +27,20 @@ export const getCourseById = async (courseId: string) => {
     return course
 }
 
+export const getCoursesByUserId = async (userId: string) => {
+    try {
+        const courses = await db.course.findMany({
+            where: {
+                userId
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+
+        return courses
+    } catch (error) {
+        console.error(error)
+        return []
+    }
+}

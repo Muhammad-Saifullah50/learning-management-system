@@ -25,33 +25,36 @@ export const PATCH = async (
             return NextResponse.json({ error: "Unauthorized", status: 401 })
         };
 
-        const chapter = await db.chapter.findUnique({
-            where: {
-                id: params.chapterId,
-                courseId: params.courseId
-            }
-        });
 
-        const muxData = await db.muxData.findUnique({
-            where: {
-                chapterId: params.chapterId
-            }
-        });
-        if (!chapter || !muxData || !chapter.title || !chapter.description || !chapter.videoUrl) {
-            return NextResponse.json({ error: "Missing required fields", status: 400 })
-        };
 
-        const publishedChapter = await db.chapter.update({
+        const unpublishedChapter = await db.chapter.update({
             where: {
                 id: params.chapterId,
                 courseId: params.courseId
             },
             data: {
+                isPublished: false
+            }
+        });
+
+        const publishedChaptersinCourse = await db.chapter.findMany({
+            where: {
+                courseId: params.courseId,
                 isPublished: true
             }
         });
 
-        return NextResponse.json({ message: "Chapter published", data: publishedChapter, status: 200 });
+        if (publishedChaptersinCourse.length) {
+            await db.course.update({
+                where: {
+                    id: params.courseId,
+                },
+                data: {
+                    isPublished: false
+                }
+            })
+        }
+        return NextResponse.json({ message: "Chapter unpublished", data: unpublishedChapter, status: 200 });
 
     } catch (error) {
         console.error(error);

@@ -6,16 +6,16 @@ import { Trash } from 'lucide-react'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import { useConfettiStore } from '@/hooks/useConfettiStore'
 
-interface ChapterActionsProps {
+interface CourseActionsProps {
     disabled: boolean
     courseId: string
-    chapterId: string
     isPublished: boolean
 }
-const ChapterActions = ({ disabled, courseId, chapterId, isPublished }:
-    ChapterActionsProps) => {
-
+const CourseActions = ({ disabled, courseId, isPublished }:
+    CourseActionsProps) => {
+    const confetti = useConfettiStore();
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -24,12 +24,13 @@ const ChapterActions = ({ disabled, courseId, chapterId, isPublished }:
             setLoading(true);
 
             if (isPublished) {
-                await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}/unpublish`)
-                toast.success('Chapter unpublished successfully');
+                await axios.patch(`/api/courses/${courseId}/unpublish`)
+                toast.success('Course unpublished successfully');
 
             } else {
-                await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}/publish`)
-                toast.success('Chapter published successfully');
+                await axios.patch(`/api/courses/${courseId}/publish`)
+                toast.success('Course published successfully');
+                confetti.onOpen();
 
             }
             router.refresh();
@@ -44,9 +45,9 @@ const ChapterActions = ({ disabled, courseId, chapterId, isPublished }:
         try {
             setLoading(true)
 
-            axios.delete(`/api/courses/${courseId}/chapters/${chapterId}`)
-            toast.success("Chapter deleted successfully");
-            router.push(`/teacher/courses/${courseId}`)
+            axios.delete(`/api/courses/${courseId}`)
+            toast.success("Course deleted successfully");
+            router.push(`/teacher/courses`)
             router.refresh();
 
         } catch (error: any) {
@@ -77,4 +78,4 @@ const ChapterActions = ({ disabled, courseId, chapterId, isPublished }:
     )
 }
 
-export default ChapterActions
+export default CourseActions

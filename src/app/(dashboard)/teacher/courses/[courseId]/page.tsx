@@ -12,6 +12,8 @@ import { Category, Chapter } from "@prisma/client";
 import PriceForm from "@/components/PriceForm";
 import AttachmentForm from "@/components/AttachmentForm";
 import ChapterForm from "@/components/ChapterForm";
+import Banner from "@/components/Banner";
+import CourseActions from "@/components/CourseActions";
 const CoursePage = async ({ params }: { params: { courseId: string } }) => {
 
     const { userId } = auth();
@@ -40,13 +42,35 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
     const completedFields = requiredFields.filter(Boolean).length;
 
     const completionText = `${completedFields}/${totalFields}`;
-    return (
+
+    const statusText =
+        completedFields === totalFields ? (
+            <span className="text-sm text-emerald-600">All fields completed, you can now publish the course</span>
+        ) : (
+            <span className="text-sm text-red-600">Complete all fields {completionText} completed</span>
+        )
+
+    const isComplete = requiredFields.every(Boolean);
+    return (<>
+
+        {!course.isPublished && (
+            <Banner
+                label="This course is unpublished. It will not be visible to students."
+            />
+        )}
         <div className="p-6">
             <div className="flex items-center justify-between">
                 <div className="flex flex-col gap-y-2">
                     <h1 className="text-2xl font-medium">Course Setup</h1>
-                    <span className="text-sm text-slate-700">Complete All fields ({completionText} completed)</span>
+                    {!course.isPublished && (
+                        <p>{statusText}</p>
+                    )}
                 </div>
+                <CourseActions 
+                disabled={!isComplete}
+                courseId={params.courseId}
+                isPublished={course.isPublished}
+                />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
@@ -120,6 +144,7 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
                 </div>
             </div>
         </div>
+    </>
     )
 }
 

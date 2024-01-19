@@ -40,6 +40,14 @@ const ChapterDetailsPage = async ({ params }: {
 
     const isComplete = requiredFields.every(Boolean);
 
+    const statusText =
+        completedFields === totalFields ? (
+            <span className="text-sm text-emerald-600">All fields completed, you can now publish the chapter</span>
+        ) : (
+            <span className="text-sm text-red-600">Complete all fields {completetionText} completed</span>
+        )
+
+
     return (
         <>
             {!chapter.isPublished && (
@@ -62,21 +70,20 @@ const ChapterDetailsPage = async ({ params }: {
                         <div className="flex items-center justify-between w-full">
                             <div className="flex flex-col gap-y-2">
                                 <h1 className="text-2xl font-medium">Chapter Creation</h1>
-                                {
-                                    completedFields === totalFields ? (
-                                        <span className="text-sm text-emerald-600">All fields completed, you can now publish the chapter</span>
-                                    ) : (
-                                        <span className="text-sm text-red-600">Complete all fields {completetionText} completed</span>
-                                    )
-                                }
+                                
+                                {!chapter.isPublished && (
+                                    <p>{statusText}</p>
+                                )}
+
+
 
                             </div>
 
-                            <ChapterActions 
-                            disabled={!isComplete}
-                            courseId={params.courseId}
-                            chapterId={params.chapterId}
-                            isPublished={chapter.isPublished}
+                            <ChapterActions
+                                disabled={!isComplete}
+                                courseId={params.courseId}
+                                chapterId={params.chapterId}
+                                isPublished={chapter.isPublished}
                             />
                         </div>
                     </div>
