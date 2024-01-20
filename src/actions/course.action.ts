@@ -144,3 +144,27 @@ export const getCourseWithPublishedChapters = async (userId: string, courseId: s
         return notFound();
     }
 }
+
+export const getCourseForStudent = async (courseId: string) => {
+    try {
+        const course = await db.course.findUnique({
+            where: {
+                id: courseId
+            },
+            include: {
+                chapters: {
+                    where: {
+                        isPublished: true
+                    },
+                    orderBy: {
+                        position: 'asc'
+                    }
+                }
+            }
+        });
+
+        return course
+    } catch (error) {
+        console.error(error)
+    }
+}
