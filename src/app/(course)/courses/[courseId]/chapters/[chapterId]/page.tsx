@@ -3,7 +3,7 @@ import Banner from '@/components/Banner';
 import { auth } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 import React from 'react'
-
+import VideoPlayer from '@/components/VideoPlayer';
 const ChapterIdPage = async ({ params }: { params: { courseId: string, chapterId: string } }) => {
 
     const { userId } = auth();
@@ -34,15 +34,21 @@ const ChapterIdPage = async ({ params }: { params: { courseId: string, chapterId
             )}
             <div className='flex flex-col max-w-4xl mx-auto pb-20'>
                 <div className='p-4'>
-                    <VideoPlayer 
-                    chapterId={params.chapterId}
-                    courserId={params.courseId}
-                    title={chapter.title}
-                    nextChapterId={nextChapter?.id}
-                    playbackId={muxData?.playbackId}
-                    completeOnEnd={completeOnEnd}
-                    isLocked={isLocked}
+                    <VideoPlayer
+                        chapterId={params.chapterId}
+                        courseId={params.courseId}
+                        title={chapter.title}
+                        nextChapterId={nextChapter?.id!}
+                        playbackId={muxData?.playbackId}
+                        completeOnEnd={completeOnEnd}
+                        isLocked={isLocked}
                     />
+                </div>
+
+                <div >
+                    <div className='p-4 flex flex-col md:flex-row items-center justify-between'>
+                        
+                    </div>
                 </div>
             </div>
         </div>

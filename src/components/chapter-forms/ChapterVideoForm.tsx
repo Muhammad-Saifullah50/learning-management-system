@@ -83,7 +83,6 @@ export const ChapterVideoForm = ({
                         endpoint="chapterVideo"
                         onChange={(url) => {
                             if (url) {
-                                console.log(url, 'url')
                                 onSubmit({ videoUrl: url });
                             }
                         }}
