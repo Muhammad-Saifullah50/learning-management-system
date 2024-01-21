@@ -4,6 +4,10 @@ import { auth } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 import React from 'react'
 import VideoPlayer from '@/components/VideoPlayer';
+import CourseEnrollButton from '@/components/CourseEnrollButton';
+import { Separator } from '@/components/ui/separator';
+import Preview from '@/components/Preview';
+import { FileIcon } from 'lucide-react';
 const ChapterIdPage = async ({ params }: { params: { courseId: string, chapterId: string } }) => {
 
     const { userId } = auth();
@@ -39,16 +43,46 @@ const ChapterIdPage = async ({ params }: { params: { courseId: string, chapterId
                         courseId={params.courseId}
                         title={chapter.title}
                         nextChapterId={nextChapter?.id!}
-                        playbackId={muxData?.playbackId}
                         completeOnEnd={completeOnEnd}
                         isLocked={isLocked}
+                        videoUrl={chapter.videoUrl}
                     />
                 </div>
 
                 <div >
                     <div className='p-4 flex flex-col md:flex-row items-center justify-between'>
-                        
+                        <h2 className='text-2xl font-semibold mb-2'>{chapter.title}</h2>
+                        {purchase ? (
+                            <div>
+                                {/* add coyurse oprogrss */}
+                            </div>) : (
+                            <CourseEnrollButton
+                                courseId={params.courseId}
+                                price={course.price!}
+                            />
+                        )}
                     </div>
+                    <Separator />
+                    <div>
+                        <Preview value={chapter.description} />
+                    </div>
+                    {!!attachments.length && (
+                        <>
+                            <Separator />
+                            <div className={'p-4'}>
+                                {attachments.map((attachment) => (
+                                    <a
+                                        target='_blank'
+                                        href={attachment.url}
+                                        key={attachment.id}
+                                        className="flex items-center p-3 w-full bg-sky-200 border text-sky-700 rounded-md hover:underline">
+                                        <p className='line-clamp-1'>
+                                            <FileIcon className='h-4 w-4 mr-2' />{attachment.name}</p>
+                                    </a>
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

@@ -6,13 +6,13 @@ import { Pencil, PlusCircle, ImageIcon, VideoIcon } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Chapter, Course, MuxData } from "@prisma/client";
-import Image from "next/image";
-import MuxPlayer from "@mux/mux-player-react";
+import { Chapter, MuxData } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import { FileUpload } from "../FileUpload";
-import { CourseImageSchema } from "@/validations/CourseCreateSchema";
 import { ChapterVideoSchema } from "@/validations/ChapterCreateSchema";
+import { CldUploadWidget, CldVideoPlayer } from "next-cloudinary";
+import 'next-cloudinary/dist/cld-video-player.css';
+
+
 interface ChapterVideoProps {
     initialData: Chapter & { muxData?: MuxData | null }
     courseId: string;
@@ -25,6 +25,7 @@ export const ChapterVideoForm = ({
     chapterId
 }: ChapterVideoProps) => {
     const [isEditing, setIsEditing] = useState(false);
+    const [videoUrl, setVideoUrl] = useState(initialData.videoUrl);
 
     const toggleEdit = () => setIsEditing((current) => !current);
 
@@ -39,6 +40,10 @@ export const ChapterVideoForm = ({
         } catch {
             toast.error("Something went wrong");
         }
+    };
+    const handleUpload = async (result: any) => {
+        setVideoUrl(result.info.secure_url);
+        await onSubmit({ videoUrl: result.info.secure_url });
     }
 
     return (
@@ -70,23 +75,34 @@ export const ChapterVideoForm = ({
                     </div>
                 ) : (
                     <div className="relative aspect-video mt-2">
-                        <MuxPlayer
-                        playbackId={initialData.muxData?.playbackId || ""}
-                        
+                        <CldVideoPlayer
+                            src={videoUrl!}
+                            width={300}
+                            height={100}
                         />
                     </div>
                 )
             )}
             {isEditing && (
                 <div>
-                    <FileUpload
-                        endpoint="chapterVideo"
-                        onChange={(url) => {
-                            if (url) {
-                                onSubmit({ videoUrl: url });
-                            }
+                    <CldUploadWidget
+                        uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                        options={{
+                            maxFiles: 1,
+                            sources: ['local', 'url']
+
                         }}
-                    />
+                        onUpload={handleUpload}>
+                        {({ open }) => {
+                            return (
+                                <div
+                                    className="p-20 flex items-center justify-center border-dashed border-2 border-slate-500"
+                                    onClick={() => open()}>
+                                    <button className="bg-blue-700 hover:bg-blue-700/90 text-sm text-white py-2 px-3 flex items-center justify-center rounded-md"> Upload a video</button>
+                                </div>
+                            );
+                        }}
+                    </CldUploadWidget>
                     <div className="text-xs text-muted-foreground mt-4">
                         Upload this chapter&apos;s video
                     </div>

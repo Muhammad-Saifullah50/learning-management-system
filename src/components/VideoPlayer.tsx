@@ -1,16 +1,16 @@
 "use client";
 
 import axios from "axios";
-import MuxPlayer from "@mux/mux-player-react";
+import { CldVideoPlayer } from 'next-cloudinary';
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Loader2, Lock } from "lucide-react";
-
+import 'next-cloudinary/dist/cld-video-player.css';
 import { cn } from "@/lib/utils";
 
 interface VideoPlayerProps {
-  playbackId: string;
+  videoUrl: string;
   courseId: string;
   chapterId: string;
   nextChapterId?: string;
@@ -20,7 +20,7 @@ interface VideoPlayerProps {
 };
 
 const VideoPlayer = ({
-  playbackId,
+  videoUrl,
   courseId,
   chapterId,
   nextChapterId,
@@ -28,13 +28,12 @@ const VideoPlayer = ({
   completeOnEnd,
   title,
 }: VideoPlayerProps) => {
-  const [isReady, setIsReady] = useState(false);
   const router = useRouter();
 
 
   return (
     <div className="relative aspect-video">
-      {!isReady && !isLocked && (
+      {!isLocked && (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-800">
           <Loader2 className="h-8 w-8 animate-spin text-secondary" />
         </div>
@@ -48,17 +47,17 @@ const VideoPlayer = ({
         </div>
       )}
       {!isLocked && (
-        <MuxPlayer
-          title={title}
-          className={cn(
-            !isReady && "hidden"
-          )}
-          onCanPlay={() => setIsReady(true)}
+        <div className="relative aspect-video mt-2">
+          <CldVideoPlayer
           onEnded={() => {}}
-          autoPlay
-          playbackId={playbackId}
-        />
+            src={videoUrl!}
+            width={300}
+            height={100}
+            autoplay
+          />
+        </div>
       )}
+
     </div>
   )
 }
