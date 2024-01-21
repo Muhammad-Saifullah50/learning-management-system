@@ -76,7 +76,7 @@ const ChapterIdPage = async ({ params }: { params: { courseId: string, chapterId
                                         href={attachment.url}
                                         key={attachment.id}
                                         className="flex items-center p-3 w-full bg-sky-200 border text-sky-700 rounded-md hover:underline">
-                                        <p className='line-clamp-1'>
+                                        <p className='line-clamp-1 flex items-center gap-x-2'>
                                             <FileIcon className='h-4 w-4 mr-2' />{attachment.name}</p>
                                     </a>
                                 ))}
