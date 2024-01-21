@@ -28,7 +28,7 @@ export const getChapterForStudent = async (userId: string, chapterId: string, co
             where: {
                 userId_courseId: {
                     userId,
-                    courseId
+                    courseId,
                 }
             }
         });
@@ -36,23 +36,23 @@ export const getChapterForStudent = async (userId: string, chapterId: string, co
         const course = await db.course.findUnique({
             where: {
                 isPublished: true,
-                id: courseId
+                id: courseId,
             },
             select: {
-                price: true
+                price: true,
             }
         });
 
         const chapter = await db.chapter.findUnique({
             where: {
                 id: chapterId,
-                isPublished: true
-            },
-
-
+                isPublished: true,
+            }
         });
 
-        if (!chapter || !course) throw new Error('Chapter or course not found');
+        if (!chapter || !course) {
+            throw new Error("Chapter or course not found");
+        }
 
         let muxData = null;
         let attachments: Attachment[] = [];
@@ -61,37 +61,35 @@ export const getChapterForStudent = async (userId: string, chapterId: string, co
         if (purchase) {
             attachments = await db.attachment.findMany({
                 where: {
-                    courseId
+                    courseId: courseId
                 }
-            })
+            });
         }
 
         if (chapter.isFree || purchase) {
             muxData = await db.muxData.findUnique({
                 where: {
-                    chapterId
+                    chapterId: chapterId,
                 }
             });
-
             nextChapter = await db.chapter.findFirst({
                 where: {
-                    courseId,
+                    courseId: courseId,
                     isPublished: true,
                     position: {
-                        gt: chapter?.position
+                        gt: chapter?.position,
                     }
                 },
-                orderBy:{
-                    position: 'asc'
+                orderBy: {
+                    position: "asc",
                 }
-            })
-        };
-
+            });
+        }
         const userProgress = await db.userProgress.findUnique({
-            where:{
-                userId_chapterId:{
+            where: {
+                userId_chapterId: {
                     userId,
-                    chapterId
+                    chapterId,
                 }
             }
         });

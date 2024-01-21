@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, Lock } from "lucide-react";
 import 'next-cloudinary/dist/cld-video-player.css';
 import { cn } from "@/lib/utils";
+import { useConfettiStore } from "@/hooks/useConfettiStore";
 
 interface VideoPlayerProps {
   videoUrl: string;
@@ -17,6 +18,7 @@ interface VideoPlayerProps {
   isLocked: boolean;
   completeOnEnd: boolean;
   title: string;
+  isCompleted?: boolean;
 };
 
 const VideoPlayer = ({
@@ -27,9 +29,32 @@ const VideoPlayer = ({
   isLocked,
   completeOnEnd,
   title,
+  isCompleted
 }: VideoPlayerProps) => {
   const router = useRouter();
+  const confetti = useConfettiStore()
 
+  const onEnd = async () => {
+    try {
+      await axios.put(`/api/courses/${courseId}/chapters/${chapterId}/progress`, {
+        isCompleted: true
+      });
+
+      if (!isCompleted && !nextChapterId) {
+        confetti.onOpen();
+      }
+
+      if (!isCompleted && nextChapterId) {
+        router.push(`/courses/${courseId}/chapters/${nextChapterId}`);
+      }
+
+      toast.success("Progress updated");
+      router.refresh();
+
+    } catch {
+      toast.error("Something went wrong");
+    }
+  }
 
   return (
     <div className="relative aspect-video">
@@ -49,11 +74,11 @@ const VideoPlayer = ({
       {!isLocked && (
         <div className="relative aspect-video mt-2">
           <CldVideoPlayer
-          onEnded={() => {}}
+            onEnded={onEnd}
             src={videoUrl!}
             width={300}
             height={100}
-            autoplay
+            autoPlay
           />
         </div>
       )}

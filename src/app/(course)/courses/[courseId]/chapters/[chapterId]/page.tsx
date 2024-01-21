@@ -16,9 +16,7 @@ const ChapterIdPage = async ({ params }: { params: { courseId: string, chapterId
     if (!userId) return redirect('/')
 
     const foundChapter = await getChapterForStudent(userId, params.chapterId, params.courseId,)
-
     const { chapter, course, muxData, attachments, nextChapter, userProgress, purchase } = foundChapter;
-
     if (!chapter || !course) return redirect('/');
 
     const isLocked = !chapter.isFree && !purchase;
@@ -47,6 +45,7 @@ const ChapterIdPage = async ({ params }: { params: { courseId: string, chapterId
                         completeOnEnd={completeOnEnd}
                         isLocked={isLocked}
                         videoUrl={chapter.videoUrl}
+                        isCompleted={userProgress?.isCompleted}
                     />
                 </div>
 
