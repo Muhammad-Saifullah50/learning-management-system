@@ -2,7 +2,7 @@
 
 import { auth } from "@clerk/nextjs";
 import { db } from "../lib/prisma"
-import { Category, Course } from "@prisma/client";
+import { Category, Course, Purchase } from "@prisma/client";
 import { getProgress } from "./progress.action";
 import { notFound } from "next/navigation";
 
@@ -166,5 +166,53 @@ export const getCourseForStudent = async (courseId: string) => {
         return course
     } catch (error) {
         console.error(error)
+    }
+}
+
+
+type DashboardCourses = {
+    completedCourses: CourseWithProgressWithCategory[];
+    coursesInProgress: CourseWithProgressWithCategory[];
+}
+export const dashboardCourses = async (userId: string): Promise<DashboardCourses> => {
+    try {
+        const purchasedCourses = await db.purchase.findMany({
+            where: {
+                userId
+            },
+            select: {
+                course: {
+                    include: {
+                        category: true,
+                        chapters: {
+                            where: {
+                                isPublished: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        const courses = purchasedCourses.map((purchase: any) => purchase.course) as CourseWithProgressWithCategory[];
+
+        for (let course of courses) {
+            const progress = await getProgress(userId, course.id)
+            course['progress'] = progress
+        };
+
+        const completedCourses = courses.filter((course: CourseWithProgressWithCategory) => course.progress === 100);
+        const coursesInProgress = courses.filter((course: CourseWithProgressWithCategory) => (course.progress ?? 0) < 100);
+
+        return {
+            completedCourses,
+            coursesInProgress
+        }
+    } catch (error) {
+        console.error(error)
+        return {
+            completedCourses: [],
+            coursesInProgress: []
+        }
     }
 }

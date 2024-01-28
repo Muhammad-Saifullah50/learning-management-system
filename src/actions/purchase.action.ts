@@ -1,3 +1,4 @@
+'use server'
 import { db } from "@/lib/prisma"
 
 export const getPurchase = async (userId: string, courseId:string) => {
