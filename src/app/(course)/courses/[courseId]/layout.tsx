@@ -6,6 +6,11 @@ import { auth } from '@clerk/nextjs'
 import { redirect } from 'next/navigation'
 import React from 'react'
 
+export const metadata = {
+    title: {
+      template: '%s - Learnitees',
+    },
+  }
 const CourseLayout = async ({ children, params }: {
     children: React.ReactNode
     params: { courseId: string }

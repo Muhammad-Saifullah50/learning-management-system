@@ -14,6 +14,17 @@ import AttachmentForm from "@/components/AttachmentForm";
 import ChapterForm from "@/components/ChapterForm";
 import Banner from "@/components/Banner";
 import CourseActions from "@/components/CourseActions";
+
+export async function generateMetadata({ params }: { params: { courseId: string } }) {
+
+    const course = await getCourseById(params.courseId);
+
+
+    return {
+        title: course.title,
+        description: course.description
+    }
+}
 const CoursePage = async ({ params }: { params: { courseId: string } }) => {
 
     const { userId } = auth();
@@ -66,10 +77,10 @@ const CoursePage = async ({ params }: { params: { courseId: string } }) => {
                         <p>{statusText}</p>
                     )}
                 </div>
-                <CourseActions 
-                disabled={!isComplete}
-                courseId={params.courseId}
-                isPublished={course.isPublished}
+                <CourseActions
+                    disabled={!isComplete}
+                    courseId={params.courseId}
+                    isPublished={course.isPublished}
                 />
             </div>
 

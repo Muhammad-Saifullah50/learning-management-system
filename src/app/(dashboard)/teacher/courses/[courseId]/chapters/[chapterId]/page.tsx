@@ -12,6 +12,20 @@ import { ArrowLeft, Eye, LayoutDashboard, Video } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+export async function generateMetadata({ params }: {
+    params: {
+        courseId: string,
+        chapterId: string
+    }
+}) {
+
+    const chapter = await getChapterById(params.chapterId, params.courseId);
+
+    return {
+        title: chapter.title,
+        description: chapter.description
+    }
+}
 const ChapterDetailsPage = async ({ params }: {
     params: {
         courseId: string,

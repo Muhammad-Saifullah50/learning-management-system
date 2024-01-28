@@ -7,6 +7,9 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import React from 'react'
 
+export const metadata = {
+  title: 'My Courses'
+}
 const CoursesPage = async () => {
 
   const { userId } = auth();

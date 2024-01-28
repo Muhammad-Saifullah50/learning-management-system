@@ -12,6 +12,9 @@ import axios from "axios"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 
+export const metadata = {
+  title: 'New Course'
+}
 const CreateCoursePage = () => {
   const router = useRouter();
   const form = useForm<z.infer<typeof CourseTitleSchema>>(

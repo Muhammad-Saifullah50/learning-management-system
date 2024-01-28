@@ -9,6 +9,17 @@ import { Separator } from '@/components/ui/separator';
 import Preview from '@/components/Preview';
 import { FileIcon } from 'lucide-react';
 import CourseProgressButton from '@/components/CourseProgressButton';
+
+export async function generateMetadata({ params }: { params: { courseId: string, chapterId: string } }) {
+    const { userId } = auth();
+
+    const foundChapter = await getChapterForStudent(userId!, params.chapterId, params.courseId,)
+
+    return {
+        title: foundChapter.chapter.title,
+        description: foundChapter.chapter.description
+    }
+}
 const ChapterIdPage = async ({ params }: { params: { courseId: string, chapterId: string } }) => {
 
     const { userId } = auth();

@@ -2,6 +2,11 @@ import Navbar from '@/components/Navbar'
 import Sidebar from '@/components/Sidebar'
 import React from 'react'
 
+export const metadata = {
+    title: {
+      template: '%s - Learnitees',
+    },
+  }
 const DashLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className='h-full '>

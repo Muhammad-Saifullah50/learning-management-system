@@ -1,6 +1,5 @@
 import { getCourseForStudent } from '@/actions/course.action'
 import { redirect } from 'next/navigation';
-import React from 'react'
 
 const CoursePage = async ({ params }: { params: { courseId: string } }) => {
 

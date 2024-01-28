@@ -5,6 +5,9 @@ import { auth } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 import React from 'react'
 
+export const metadata = {
+  title: 'Analytics'
+}
 const AnalyticsPage = async () => {
 
   const { userId } = auth();

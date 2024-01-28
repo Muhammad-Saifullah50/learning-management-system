@@ -12,6 +12,10 @@ interface SearchPageProps {
     categoryId: string
   }
 }
+
+export const metadata = {
+  title: 'Search Courses'
+}
 const SearchPage = async ({ searchParams }: SearchPageProps) => {
 
   const { userId } = auth();
