@@ -3,8 +3,12 @@ import CoursesList from "@/components/CoursesList";
 import InfoCard from "@/components/InfoCard";
 import { auth } from "@clerk/nextjs";
 import { CheckCircle, Clock } from "lucide-react";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
+export const metadata: Metadata = {
+  title: 'Home - Learnitees',
+}
 export default async function Dashboard() {
 
   const { userId } = auth();
