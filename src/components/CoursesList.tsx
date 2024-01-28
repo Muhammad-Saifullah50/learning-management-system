@@ -18,7 +18,7 @@ const CoursesList = ({ items }: CoursesListProps) => {
                 <div className="h-[70vh]  w-full flex items-center justify-center text-center text-muted-foreground">
                     No courses found
                 </div>)}
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:gap-4 ">
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ">
                 {items.map((item) => (
                     <CourseCard
                         key={item.id}

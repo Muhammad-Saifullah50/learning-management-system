@@ -32,7 +32,7 @@ const ChapterActions = ({ disabled, courseId, chapterId, isPublished }:
                 toast.success('Chapter published successfully');
 
             }
-            router.refresh();
+            router.back();
         } catch (error: any) {
             console.error(error)
             toast.error(process.env.NODE_ENV === 'development' ? error?.message : 'Something went wrong')
